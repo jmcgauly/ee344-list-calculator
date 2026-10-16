@@ -154,7 +154,7 @@ from labtools import add, multiply
 **In the terminal**, create a branch for your work:
 
 ```bash
-git switch -c list-calculator
+git checkout -b list-calculator
 ```
 
 **In your code editor:**
@@ -260,10 +260,12 @@ Check the repository fields: GitHub may initially select the instructor's reposi
 Click **Create pull request**. Review the changed files with a classmate, then merge it into your fork's `main` branch. After merging, run:
 
 ```bash
-git switch main
+git checkout main
 git pull --ff-only origin main
 python demo.py
 ```
+
+When you finish using the environment, run `deactivate`.
 
 ## Files in this package
 
@@ -274,17 +276,3 @@ python demo.py
 | `demo.py` | Calls the functions and prints their results |
 | `pyproject.toml` | Package information and dependencies |
 | `.gitignore` | Lists generated files Git should ignore |
-
-## Try `.gitignore`
-
-Run these commands in your active environment. The first creates a generated output file:
-
-```bash
-python -c "from pathlib import Path; Path('outputs').mkdir(exist_ok=True); Path('outputs/example.txt').write_text('demo')"
-git status --short
-git check-ignore outputs/example.txt
-```
-
-`git status` should not list `outputs/example.txt`. `git check-ignore` should print its path. The repository also ignores `.venv/`, Python caches, and generated package metadata. Ignore rules do not remove files that Git already tracks.
-
-When you finish using the environment, run `deactivate`.

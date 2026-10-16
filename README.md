@@ -30,7 +30,7 @@ Check that Git will push to your fork:
 git remote -v
 ```
 
-The `origin` URL should contain **your username**.
+The `origin` URL should contain **your username**. Cloning this public repo over HTTPS does not require authentication, but pushing does. If you have not set up GitHub access from Git, complete [SSH setup](#ssh-setup-for-pushing) before step 7.
 
 ## 3. Create and activate a Python environment
 
@@ -165,7 +165,7 @@ git commit -m "Add list multiplication and NumPy comparisons"
 git push -u origin list-calculator
 ```
 
-The push uploads your branch to **your fork**. Git may ask you to authenticate with GitHub.
+The push uploads your branch to **your fork**. If it fails with an authentication or permission error, follow [SSH setup](#ssh-setup-for-pushing), then retry the push. Creating a commit is local, so a failed push does not remove your work.
 
 **On GitHub**, open your fork, choose **Pull requests**, then **New pull request**. Set:
 
@@ -185,6 +185,97 @@ git switch main
 git pull --ff-only origin main
 python demo.py
 ```
+
+## SSH setup for pushing
+
+Use this section if you want to authenticate with an SSH key. Setting up a key and changing the remote to SSH are both required. Signing in to the GitHub website does not sign your terminal in.
+
+Use **Terminal on macOS/Linux** or **Git Bash on Windows** for the commands in this section. These setup steps only need to be done once per computer and GitHub account.
+
+### A. Create a key
+
+Use the email associated with your GitHub account in place of `YOUR_EMAIL`:
+
+```bash
+mkdir -p ~/.ssh
+```
+
+```bash
+ssh-keygen -t ed25519 -C "YOUR_EMAIL" -f ~/.ssh/id_ed25519_ee344
+```
+
+Enter a passphrase when prompted, then enter it again. If asked to overwrite an existing key, answer **n**. Reuse that key if it is already yours for this account, or choose a different filename and use it throughout these instructions.
+
+### B. Add the public key to GitHub
+
+**On macOS**, copy the public key:
+
+```bash
+pbcopy < ~/.ssh/id_ed25519_ee344.pub
+```
+
+**On Linux or Windows Git Bash**, display it and copy the entire line:
+
+```bash
+cat ~/.ssh/id_ed25519_ee344.pub
+```
+
+On GitHub, sign in to the account that owns your fork. Open **Settings → SSH and GPG keys → New SSH key**. Enter a title such as `EE344 laptop`, choose **Authentication Key**, paste the public key, and click **Add SSH key**.
+
+Upload only the file ending in `.pub`. The file without `.pub` is your private key and stays on your computer.
+
+### C. Tell SSH which key to use
+
+In your text editor, open or create `~/.ssh/config`. Keep any existing entries and add this block near the top, before any broad `Host *` block. If `Host github-ee344` already exists, update that block instead of adding a second one.
+
+```sshconfig
+Host github-ee344
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_ee344
+    IdentitiesOnly yes
+```
+
+`github-ee344` is a local nickname for GitHub that selects this key. It is useful when another SSH key on your computer belongs to a different GitHub account. Save the file, then test:
+
+```bash
+ssh -T git@github-ee344
+```
+
+If asked to trust the host, compare the fingerprint with [GitHub's published fingerprints](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints) before answering `yes`.
+
+The response should greet **your GitHub username** and say you authenticated successfully. The message that GitHub does not provide shell access is normal. If it names another account, check which account received your public key and which key the config selects.
+
+You may need to enter your key's passphrase for SSH or Git commands. GitHub's [SSH agent instructions](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) explain how to remember it during your session.
+
+### D. Change your existing clone to SSH
+
+In the terminal, enter your cloned repository folder. Replace `YOUR_USERNAME` with the account that owns your fork:
+
+```bash
+git remote set-url origin git@github-ee344:YOUR_USERNAME/ee344-list-calculator.git
+git remote -v
+```
+
+Both `origin` lines should now start with `git@github-ee344:` and contain your username. Run this in **each clone** you want to use with SSH; changing one clone does not change the other.
+
+For a future clone, you can use the SSH URL directly:
+
+```bash
+git clone git@github-ee344:YOUR_USERNAME/ee344-list-calculator.git
+```
+
+### E. Retry the push
+
+For the assignment branch from step 5:
+
+```bash
+git push -u origin list-calculator
+```
+
+For the instructor's demo on `main`, use `git push origin main` instead. SSH authentication must identify an account with permission to push to the repository in `origin`.
+
+References: [create a key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent), [add it to GitHub](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account), [test the connection](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/testing-your-ssh-connection), [choose a key for each account](https://docs.github.com/en/account-and-profile/how-tos/account-management/managing-multiple-accounts).
 
 ## Files in this package
 

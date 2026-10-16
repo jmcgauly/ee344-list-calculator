@@ -7,7 +7,7 @@ name = "ee344-list-calculator"
 version = "0.1.0"
 description = "A small list calculator for EE344 Lab 1"
 requires-python = ">=3.9"
-dependencies = []
+dependencies = ["numpy"]
 
 [tool.setuptools]
 packages = ["labtools"]

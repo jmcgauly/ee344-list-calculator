@@ -1,6 +1,6 @@
 # EE344 Lab 1: List calculator
 
-Start with a working `add` function. Your tasks are to implement `multiply` using a `for` loop and compare your results with NumPy.
+Start with a working `add` function. Your tasks are to implement `multiply` using a `for` loop, then create `add_numpy` and `multiply_numpy` using NumPy.
 
 You need a GitHub account, Git, and Python 3.9 or newer. Follow the steps below in order. Copy terminal commands one block at a time.
 
@@ -127,6 +127,7 @@ Keep this terminal open for the rest of the lab. If you open a new terminal, ent
 With the environment active, run:
 
 ```bash
+python -m pip install --upgrade pip
 python -m pip install -e .
 python demo.py
 ```
@@ -181,7 +182,7 @@ The output should now include `Product: 24`. Change `numbers` in `demo.py` to ea
 | `[-2, 3]` | `1` | `-6` |
 | `[]` | `0` | `1` |
 
-## 7. Assignment 2: Install and use NumPy
+## 7. Assignment 2: Create NumPy functions
 
 **In the same terminal**, install NumPy into your active environment:
 
@@ -191,15 +192,29 @@ python -m pip install numpy
 
 **In your code editor:**
 
-1. Add `import numpy as np` at the top of `demo.py`.
-2. Add print statements for `np.sum(numbers)` and `np.prod(numbers)`. Keep your loop functions and their print statements so you can compare the results.
-3. In `pyproject.toml`, replace `dependencies = []` with:
+1. In `labtools/arithmetic.py`, add `import numpy as np` and create two new functions. Each should accept a list called `numbers` and return its result:
+   - `add_numpy(numbers)`: calculate the sum using `np.sum`.
+   - `multiply_numpy(numbers)`: calculate the product using `np.prod`.
+2. Keep your loop-based `add` and `multiply` functions. In `demo.py`, import all four functions from the package:
+
+```python
+from labtools import add, multiply, add_numpy, multiply_numpy
+```
+
+3. Keep the existing sum and product printouts. Add these calls below them:
+
+```python
+print("NumPy sum:", add_numpy(numbers))
+print("NumPy product:", multiply_numpy(numbers))
+```
+
+4. In `pyproject.toml`, replace `dependencies = []` with:
 
 ```toml
 dependencies = ["numpy"]
 ```
 
-4. Save both files.
+5. Save your changes.
 
 Installing NumPy makes it available now. Listing it in `pyproject.toml` lets someone else install it along with your package. `pip` does not edit that file for you.
 
@@ -210,7 +225,7 @@ python -m pip install -e .
 python demo.py
 ```
 
-Check all four inputs from assignment 1. NumPy's sum and product should match your functions.
+For `[1, 2, 3, 4]`, both sum functions should give `10` and both product functions should give `24`. Check all four inputs from assignment 1, including the empty list. The NumPy functions should match your loop functions; a displayed value such as `0.0` is numerically equal to `0`.
 
 ## 8. Commit and push your work
 
@@ -224,8 +239,8 @@ git diff
 If `git diff` opens a scrollable view, press `q` to return to the prompt. Then save and upload your changes:
 
 ```bash
-git add labtools/arithmetic.py demo.py pyproject.toml
-git commit -m "Add list multiplication and NumPy comparisons"
+git add labtools demo.py pyproject.toml
+git commit -m "Add list multiplication and NumPy functions"
 git push -u origin list-calculator
 ```
 
@@ -254,7 +269,7 @@ python demo.py
 
 | File | Purpose |
 | --- | --- |
-| `labtools/arithmetic.py` | Your `add` and `multiply` functions |
+| `labtools/arithmetic.py` | Your calculator functions |
 | `labtools/__init__.py` | Exposes functions for `from labtools import ...` |
 | `demo.py` | Calls the functions and prints their results |
 | `pyproject.toml` | Package information and dependencies |
